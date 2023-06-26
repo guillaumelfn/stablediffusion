@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Stability API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282828;
+            color: #ddd;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #outputImage {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+
+        .loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none;
+            margin: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Enter Prompt</h1>
+        <form id="promptForm">
+            <input type="text" id="prompt" name="prompt" required>
+            <input type="submit" value="Submit">
+        </form>
+        <div class="loader" id="loader"></div>
+        <img id="outputImage" src="" alt="Generated image will appear here">
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#promptForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var prompt = $('#prompt').val().trim();
+
+                if (!prompt) {
+                    alert('Please enter a prompt.');
+                    return;
+                }
+
+                $("#loader").show();  // Show the loader
+
+                $.ajax({
+                    url: 'index.php',
+                    type: 'get',
+                    data: { 'prompt': prompt },
+                    success: function () {
+                        // The AJAX request was successful, reload image
+                        $("#outputImage").attr("src", "out/v1_txt2img_0.png?" + new Date().getTime());
+                        $("#loader").hide();  // Hide the loader
+                    },
+                    error: function () {
+                        alert('Error generating image. Please try again.');
+                        $("#loader").hide();  // Hide the loader
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
